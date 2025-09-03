@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ejercicio 4 - Calificaciones</title>
+    <style>
+        body { font-family: system-ui, Arial, sans-serif; max-width: 760px; margin: 32px auto; }
+        .row { margin: 8px 0; display: flex; gap: 12px; align-items: center; }
+        .row label { width: 140px; }
+        .actions { display: flex; gap: 8px; margin: 16px 0; }
+        .result { background: #f6f6f6; padding: 12px; border-radius: 8px; min-height: 32px; }
+        .error { border: 1px solid #d33; outline: none; }
+        .muted { color:#666; font-size:.9rem; }
+        .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#eef; margin-left:6px; }
+    </style>
+</head>
+<body>
+<h1>Ejercicio 4 — Procesar calificaciones</h1>
+<div class="muted">Ingresa las calificaciones de <b>5 estudiantes</b> (rango permitido: <b>0 a 10</b>). Aprobado: <b>≥ 6</b>.</div>
+
+<div id="inputs"></div>
+
+<div class="actions">
+    <button id="btn-calcular">Calcular</button>
+    <button id="btn-reset">Resetear</button>
+    <button id="btn-ejemplo" title="Rellenar ejemplo">Rellenar ejemplo</button>
+</div>
+
+<h2>Resultado</h2>
+<div id="resultado" class="result"></div>
+
+<script>
+    // Configurable si tu escala no es 0–10
+    const MIN_CAL = 0;
+    const MAX_CAL = 10;
+    const APROBACION = 6;
+
+    const inputsWrap = document.getElementById('inputs');
+    const out = document.getElementById('resultado');
+
+    function crearInputs() {
+        inputsWrap.innerHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            const row = document.createElement('div');
+            row.className = 'row';
+            row.innerHTML = `
+          <label for="cal${i}">Estudiante ${i}:</label>
+          <input type="number" id="cal${i}" class="cal" min="${MIN_CAL}" max="${MAX_CAL}" step="0.1" placeholder="0 a ${MAX_CAL}" />
+          <span class="muted pill">0–${MAX_CAL}</span>
+        `;
+            inputsWrap.appendChild(row);
+        }
+    }
+
+    function leerYValidar() {
+        const campos = [...document.querySelectorAll('.cal')];
+        const valores = [];
+        let ok = true;
+
+        campos.forEach(input => {
+            input.classList.remove('error');
+            const v = parseFloat(input.value);
+            if (Number.isNaN(v) || v < MIN_CAL || v > MAX_CAL) {
+                input.classList.add('error');
+                ok = false;
+            } else {
+                valores.push(v);
+            }
+        });
+
+        if (!ok) {
+            out.innerHTML = 'Revisa las calificaciones marcadas en rojo. Deben estar entre ' + MIN_CAL + ' y ' + MAX_CAL + '.';
+            return null;
+        }
+        return valores;
+    }
+
+    function indicesDe(arr, valor) {
+        const idxs = [];
+        arr.forEach((v, i) => { if (v === valor) idxs.push(i); });
+        return idxs;
+    }
+
+    function calcular() {
+        const califs = leerYValidar();
+        if (!califs) return;
+
+        const n = califs.length;
+        const suma = califs.reduce((a, n) => a + n, 0);
+        const promedio = (suma / n).toFixed(2);
+
+        const aprobados = califs.filter(c => c >= APROBACION).length;
+
+        const maxima = Math.max(...califs);
+        const minima = Math.min(...califs);
+
+        const idxMax = indicesDe(califs, maxima).map(i => i + 1);
+        const idxMin = indicesDe(califs, minima).map(i => i + 1);
+
+        out.innerHTML = `
+        <div><b>Promedio general:</b> ${promedio}</div>
+        <div><b>Estudiantes aprobados (≥ ${APROBACION}):</b> ${aprobados} de ${n}</div>
+        <div><b>Calificación más alta:</b> ${maxima} <span class="muted">(${idxMax.map(x => 'Est. ' + x).join(', ')})</span></div>
+        <div><b>Calificación más baja:</b> ${minima} <span class="muted">(${idxMin.map(x => 'Est. ' + x).join(', ')})</span></div>
+      `;
+    }
+
+    function resetear() {
+        crearInputs();
+        out.textContent = '';
+    }
+
+    function ejemplo() {
+        // Rellena valores de muestra (puedes cambiarlos)
+        const demo = [9.5, 7.2, 5.8, 10, 6];
+        document.querySelectorAll('.cal').forEach((inp, i) => {
+            inp.value = demo[i] ?? '';
+            inp.classList.remove('error');
+        });
+        out.textContent = '';
+    }
+
+    document.getElementById('btn-calcular').addEventListener('click', calcular);
+    document.getElementById('btn-reset').addEventListener('click', resetear);
+    document.getElementById('btn-ejemplo').addEventListener('click', ejemplo);
+
+    // Inicial
+    crearInputs();
+
+</script>
+</body>
+</html>

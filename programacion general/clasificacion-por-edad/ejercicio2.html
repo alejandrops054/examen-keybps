@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ejercicio 2 - Clasificación por edad</title>
+    <style>
+        body { font-family: system-ui, Arial, sans-serif; max-width: 720px; margin: 32px auto; }
+        .row { margin: 8px 0; }
+        .actions { display: flex; gap: 8px; margin: 12px 0; }
+        .result { background: #f6f6f6; padding: 12px; border-radius: 8px; min-height: 32px; }
+    </style>
+</head>
+<body>
+<h1>Ejercicio 2 — Clasificación por edad</h1>
+
+<div class="row">
+    <label for="edad">Edad: </label>
+    <input type="number" id="edad" min="-999" max="999" />
+</div>
+
+<div class="actions">
+    <button id="btn-evaluar">Evaluar</button>
+    <button id="btn-reset">Resetear</button>
+</div>
+
+<h2>Resultado</h2>
+<div id="resultado" class="result"></div>
+
+<script>
+    const out = document.getElementById('resultado');
+    const edadInput = document.getElementById('edad');
+
+    function evaluar() {
+        const val = parseInt(edadInput.value, 10);
+        if (Number.isNaN(val)) {
+            out.textContent = 'Ingresa una edad válida.';
+            return;
+        }
+        if (val < 0 || val > 120) {
+            out.textContent = 'Edad inválida';
+            return;
+        }
+        if (val < 18) out.textContent = 'Menor de edad';
+        else if (val <= 35) out.textContent = 'Adulto joven';
+        else out.textContent = 'Adulto mayor';
+    }
+
+    function resetear() {
+        edadInput.value = '';
+        out.textContent = '';
+    }
+
+    document.getElementById('btn-evaluar').addEventListener('click', evaluar);
+    document.getElementById('btn-reset').addEventListener('click', resetear);
+
+
+
+
+</script>
+</body>
+</html>
+
+
+
+
+

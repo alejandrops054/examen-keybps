@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ejercicio 1 - Operaciones</title>
+  <style>
+    .input-num {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ejercicio 1 - Operaciones con Números</h1>
+
+  <div id="contenedor-inputs">
+    <div class="input-num">
+      <label>Valor 1:</label>
+      <input type="number" class="num">
+    </div>
+    <div class="input-num">
+      <label>Valor 2:</label>
+      <input type="number" class="num">
+    </div>
+  </div>
+
+  <button onclick="agregarInput()">Agregar otro número</button>
+  <br><br>
+
+  <label for="operacion">Selecciona la operación:</label>
+  <select id="operacion">
+    <option value="suma">Suma</option>
+    <option value="producto">Producto</option>
+    <option value="mayor">Número mayor</option>
+    <option value="todas">Todas las operaciones</option>
+  </select><br><br>
+
+  <button onclick="calcular()">Calcular</button>
+  <button onclick="resetear()">Resetear</button>
+
+  <h2>Resultado:</h2>
+  <div id="resultado"></div>
+
+  <script>
+    function agregarInput() {
+      let contenedor = document.getElementById("contenedor-inputs");
+      let cantidad = contenedor.getElementsByClassName("num").length + 1;
+
+      let nuevoDiv = document.createElement("div");
+      nuevoDiv.classList.add("input-num");
+      nuevoDiv.innerHTML = `<label>Valor ${cantidad}:</label>
+                            <input type="number" class="num">`;
+
+      contenedor.appendChild(nuevoDiv);
+    }
+
+    function calcular() {
+      let inputs = document.querySelectorAll(".num");
+      let numeros = [];
+
+      inputs.forEach(input => {
+        let valor = parseFloat(input.value);
+        if (!isNaN(valor)) {
+          numeros.push(valor);
+        }
+      });
+
+      if (numeros.length < 2) {
+        alert("Por favor ingresa al menos dos números válidos.");
+        return;
+      }
+
+      let operacion = document.getElementById("operacion").value;
+      let salida = "";
+
+      switch (operacion) {
+        case "suma":
+          let suma = numeros.reduce((acc, n) => acc + n, 0);
+          salida = `<p>La suma es: ${suma}</p>`;
+          break;
+
+        case "producto":
+          let producto = numeros.reduce((acc, n) => acc * n, 1);
+          salida = `<p>El producto es: ${producto}</p>`;
+          break;
+
+        case "mayor":
+          let mayor = Math.max(...numeros);
+          salida = `<p>El mayor es: ${mayor}</p>`;
+          break;
+
+        case "todas":
+          let sumaTotal = numeros.reduce((acc, n) => acc + n, 0);
+          let productoTotal = numeros.reduce((acc, n) => acc * n, 1);
+          let mayorNum = Math.max(...numeros);
+
+          salida += `<p>La suma es: ${sumaTotal}</p>`;
+          salida += `<p>El producto es: ${productoTotal}</p>`;
+          salida += `<p>El mayor es: ${mayorNum}</p>`;
+          break;
+      }
+
+      document.getElementById("resultado").innerHTML = salida;
+    }
+
+    function resetear() {
+      document.getElementById("contenedor-inputs").innerHTML = `
+        <div class="input-num">
+          <label>Valor 1:</label>
+          <input type="number" class="num">
+        </div>
+        <div class="input-num">
+          <label>Valor 2:</label>
+          <input type="number" class="num">
+        </div>`;
+
+      document.getElementById("operacion").value = "suma";
+      document.getElementById("resultado").innerHTML = "";
+    }
+  </script>
+</body>
+</html>

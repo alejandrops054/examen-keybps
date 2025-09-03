@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ejercicio 5 - Tabla de multiplicar</title>
+    <style>
+        body { font-family: system-ui, Arial, sans-serif; max-width: 720px; margin: 32px auto; }
+        .row { margin: 8px 0; display:flex; gap:12px; align-items:center; }
+        .row label { width: 200px; }
+        .actions { display: flex; gap: 8px; margin: 12px 0; }
+        .result { background: #f6f6f6; padding: 12px; border-radius: 8px; min-height: 32px; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+        .error { border: 1px solid #d33; outline: none; }
+        .muted { color:#666; font-size:.9rem; }
+    </style>
+</head>
+<body>
+<h1>Ejercicio 5 — Tabla de multiplicar (1–10)</h1>
+
+<div class="row">
+    <label for="numero">Número (1–10):</label>
+    <input type="number" id="numero" min="1" max="10" step="1" placeholder="Ej. 3" />
+    <span class="muted">Genera  n × 1 ... n × 10</span>
+</div>
+
+<div class="actions">
+    <button id="btn-generar">Generar</button>
+    <button id="btn-copiar">Copiar</button>
+    <button id="btn-reset">Resetear</button>
+</div>
+
+<h2>Resultado</h2>
+<div class="result">
+    <pre id="salida" class="mono"></pre>
+</div>
+
+<script>
+    const input = document.getElementById('numero');
+    const salida = document.getElementById('salida');
+    const btnGenerar = document.getElementById('btn-generar');
+    const btnCopiar = document.getElementById('btn-copiar');
+    const btnReset = document.getElementById('btn-reset');
+
+    function validarEnteroRango(n, min, max) {
+        return Number.isInteger(n) && n >= min && n <= max;
+    }
+
+    function generar() {
+        const n = input.valueAsNumber;
+        input.classList.remove('error');
+        salida.textContent = '';
+
+        if (!validarEnteroRango(n, 1, 10)) {
+            input.classList.add('error');
+            salida.textContent = 'Ingresa un número entero entre 1 y 10.';
+            return;
+        }
+
+        const lineas = [];
+        for (let i = 1; i <= 10; i++) {
+            lineas.push(`${n} x ${i} = ${n * i}`);
+        }
+        salida.textContent = lineas.join('\n');
+    }
+
+    async function copiar() {
+        const texto = salida.textContent.trim();
+        if (!texto) return;
+        try {
+            await navigator.clipboard.writeText(texto);
+            const original = btnCopiar.textContent;
+            btnCopiar.textContent = '¡Copiado!';
+            setTimeout(() => (btnCopiar.textContent = original), 1200);
+        } catch {
+            alert('No se pudo copiar automáticamente. Selecciona y copia manualmente.');
+        }
+    }
+
+    function resetear() {
+        input.value = '';
+        input.classList.remove('error');
+        salida.textContent = '';
+        input.focus();
+    }
+
+    // Eventos
+    btnGenerar.addEventListener('click', generar);
+    btnCopiar.addEventListener('click', copiar);
+    btnReset.addEventListener('click', resetear);
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') generar();
+    });
+
+</script>
+</body>
+</html>
